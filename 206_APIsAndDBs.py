@@ -139,45 +139,64 @@ conn.commit()
 
 # Make a query to select all of the records in the Users database.
 # Save the list of tuples in a variable called users_info.
+cur.execute("SELECT * FROM Users")
+users_info= cur.fetchall()
 
-users_info = True
 
 # Make a query to select all of the user screen names from the database.
 # Save a resulting list of strings (NOT tuples, the strings inside them!)
 # in the variable screen_names. HINT: a list comprehension will make
 # this easier to complete!
-screen_names = True
+sql_str= "SELECT screen_name FROM Users"
+l=[]
+for name in cur.execute(sql_str):
+	l.append(str(name))
+screen_names=l
+
 
 
 # Make a query to select all of the tweets (full rows of tweet information)
 # that have been retweeted more than 10 times. Save the result
 # (a list of tuples, or an empty list) in a variable called retweets.
-retweets = True
+cur.execute( 'SELECT * FROM tweets WHERE retweets>10')
+retweets=cur.fetchall()
+
+
 
 
 # Make a query to select all the descriptions (descriptions only) of
 # the users who have favorited more than 500 tweets. Access all those
 # strings, and save them in a variable called favorites,
 # which should ultimately be a list of strings.
-favorites = True
+sql_str= "SELECT description FROM Users WHERE num_favs>500"
+l=[]
+for obj in cur.execute(sql_str):
+	l.append(str(obj[0]))
+favorites=l
+
 
 
 # Make a query using an INNER JOIN to get a list of tuples with 2
 # elements in each tuple: the user screenname and the text of the
-# tweet. Save the resulting list of tuples in a variable called joined_data2.
-joined_data = True
+#tweet. Save the resulting list of tuples in a variable called joined_data2.
+cur.execute("SELECT screen_name, tweet_text FROM Tweets INNER JOIN Users ON Tweets.user_posted = Users.user_id")
+joined_data=cur.fetchall()
 
 # Make a query using an INNER JOIN to get a list of tuples with 2
 # elements in each tuple: the user screenname and the text of the
 # tweet in descending order based on retweets. Save the resulting
 # list of tuples in a variable called joined_data2.
+cur.execute("SELECT Users.screen_name,Tweet_text FROM Users INNER JOIN Tweets On Users.user_id=Tweets.user_posted ORDER BY Tweets.retweets DESC")
+joined_data2=cur.fetchall()
 
-joined_data2 = True
+
 
 
 ### IMPORTANT: MAKE SURE TO CLOSE YOUR DATABASE CONNECTION AT THE END
 ### OF THE FILE HERE SO YOU DO NOT LOCK YOUR DATABASE (it's fixable,
 ### but it's a pain). ###
+conn.commit()
+cur.close()
 
 ###### TESTS APPEAR BELOW THIS LINE ######
 ###### Note that the tests are necessary to pass, but not sufficient --
